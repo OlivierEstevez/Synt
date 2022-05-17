@@ -1,0 +1,33 @@
+@import url("./fonts.css");
+
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+*.invisible {
+    display: none !important;
+}
+
+html {
+    font-size: 62.5%; /* 10px */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale; 
+    text-rendering: optimizeLegibility;
+}
+
+body {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 1.8rem;
+    line-height: 1.33;
+    overflow: hidden;
+
+    background: black;
+    color: white;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
