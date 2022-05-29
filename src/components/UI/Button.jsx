@@ -35,6 +35,17 @@ const Button = styled("button", {
       mid: {
         fontSize: "$small",
         padding: "4px 16px",
+      },
+      small: {
+        fontSize: "$small",
+        color: "$grey40",
+        background: "transparent",
+        border: "none",
+
+        "&:hover": {
+          background: "transparent",
+          color: "$grey20"
+        }
       }
     }
   },

@@ -4,8 +4,13 @@ import GridSystem from "./GridSystem"
 import EmptySketch from "./OnlyVolume"
 import Lines from "./Lines"
 import Blocks from "./Blocks"
+import LinesTwo from "./LinesTwo"
 
 const generators = [
+    {
+        name: "Lines Pro",
+        sketch: LinesTwo
+    },
     {
         name: "Blocks",
         sketch: Blocks

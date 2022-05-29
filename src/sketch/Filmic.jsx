@@ -31,6 +31,11 @@ export default function filmic(s){
         s.resizeCanvas(canvasSize.x, canvasSize.y)
     }
 
+    // s.keyPressed = () => {
+    //     if(s.key == "s")
+    //         s.save("pop.png")
+    // }
+
     class filmicSpectrogram {
         constructor(x, y, width, height, direction, color) {
             this.x = x

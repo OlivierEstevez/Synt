@@ -22,7 +22,15 @@ export default function GridSystem(s){
     s.updateWithProps = props => {
         volume = props.volume
         ticks = props.ticks
+        canvasSize.x = props.sizeX
+        canvasSize.y = props.sizeY
+        s.resizeCanvas(canvasSize.x, canvasSize.y)
     }
+
+    // s.keyPressed = () => {
+    //     if(s.key == "s")
+    //         s.save("pop.png")
+    // }
 
     class grid {
         constructor(x, y, width, height, direction, color) {
@@ -32,13 +40,13 @@ export default function GridSystem(s){
             this.height = height
             this.direction = direction
             this.color = color
-            this.divisions = 64
+            this.divisions = 32
             this.margin = 8
         }
 
         show() {
             let sqSize = this.width / volume.length
-            let threshold = 0.8
+            let threshold = 0.5
             for (let n = 0; n < volume.length; n++) {
                 let value = volume[n]
                 let roundValue = Math.round(value)

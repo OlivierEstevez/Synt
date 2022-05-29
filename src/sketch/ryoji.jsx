@@ -21,7 +21,7 @@ export default function Ryoji(s){
         visual.show(i)
 
         // i+= 60 / 60 / props.bpm * 30
-        i+= 0.5
+        i+= 0.1
     }
 
     s.updateWithProps = props => {
@@ -32,6 +32,11 @@ export default function Ryoji(s){
         canvasSize.y = props.sizeY
         s.resizeCanvas(canvasSize.x, canvasSize.y)
     }
+
+    // s.keyPressed = () => {
+    //     if(s.key == "s")
+    //         s.save("pop.png")
+    // }
 
     class visualizer {
         constructor(x, y, width, height, direction, color) {
@@ -128,13 +133,13 @@ export default function Ryoji(s){
 
             }
 
-            s.stroke(255)
-            for(let i = 0; i < sameValueLines.length; i++){
-                for(let q = 0;q < sameValueLines.length; q++){
-                    // s.line(sameValueLines[i].x + sqSize/2, sameValueLines[i].y + (this.height / this.divisions) / 2, sameValueLines[q].x + sqSize/2, sameValueLines[q].y + (this.height / this.divisions) / 2)
-                }
+            // s.stroke(255)
+            // for(let i = 0; i < sameValueLines.length; i++){
+            //     for(let q = 0;q < sameValueLines.length; q++){
+            //         s.line(sameValueLines[i].x + sqSize/2, sameValueLines[i].y + (this.height / this.divisions) / 2, sameValueLines[q].x + sqSize/2, sameValueLines[q].y + (this.height / this.divisions) / 2)
+            //     }
 
-            }
+            // }
 
             // TICKS / RHYTHM
             // s.stroke(255, 0, 0)

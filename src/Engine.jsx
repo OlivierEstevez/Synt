@@ -7,12 +7,15 @@ import { useState, useEffect, useRef } from "react"
 // UI
 import EngineHeader from "./components/Engine Parts/EngineHeader"
 import EngineFooter from "./components/Engine Parts/EngineFooter"
-import Panel from "./components/UI/Panel"
 import Button from "./components/UI/Button"
 import Dropzone from "./components/UI/Dropzone"
-import CanavasContainer from "./components/Engine Parts/CanvasContainer"
+import CanvasContainer, {CanvasPlaceholder} from "./components/Engine Parts/CanvasContainer"
+import ControllersMainContainer, { ControllersContainer, Controller } from "./components/Engine Parts/Controllers"
 import { ColorPicker, useColor } from "react-color-palette"
 import "./styles/colorpicker.css"
+import { ArcherContainer, ArcherElement } from 'react-archer'
+import Zoom from "./components/Engine Parts/Zoom"
+import Select from "./components/UI/Select"
 
 // Essentia
 import useEssentiaAnalyser from "./utils/engine/useEssentiaAnalyser"
@@ -21,7 +24,7 @@ import testObject from "./utils/engine/testObject.json"
 // P5
 import { ReactP5Wrapper } from "react-p5-wrapper"
 import generators from "./sketch/generators"
-import saveCanvas from "./utils/p5 functions/saveCanvas"
+import canvasToImage from "canvas-to-image"
 
 export default function Engine() {
 
@@ -60,7 +63,16 @@ export default function Engine() {
 
 
   const [color, setColor] = useColor("hex", "#ffffff")
-  const [size, setSize] = useState({x: 700, y: 700})
+  const [size, setSize] = useState({ x: 700, y: 700 })
+  const [transparentBg, setTransparentBg] = useState(false)
+  const [UIVisibility, setUIVisibility] = useState(false)
+  const [zoomLevel, setZoomLevel] = useState(1)
+
+  const exportImage = (name, type) => {
+    canvasToImage("defaultCanvas0", {
+      name: name ? name : "artwork"
+    })
+  }
 
   return (
     <div className="App">
@@ -68,24 +80,100 @@ export default function Engine() {
       <EngineHeader
         width={size.x}
         height={size.y}
-        updateSize={(width, height) => setSize({x: width, y: height})}
+        updateSize={(width, height) => setSize({ x: width, y: height })}
+        updateBackground={value => setTransparentBg(value)}
+        updateUIVisibility={value => setUIVisibility(value)}
+        exportFunction={(name, type) => exportImage(name, type)}
       >
-        <select value={generator.name} onChange={e => setGenerator(generators.find(a => a.name == e.currentTarget.value))}>
+        <Select value={generator.name} onChange={e => setGenerator(generators.find(a => a.name == e.currentTarget.value))}>
           {generators.map((elem, index) => (
             <option key={index} value={elem.name}>{elem.name}</option>
           ))}
-        </select>
+        </Select>
+
       </EngineHeader>
 
-      <Panel>
-       
-        <Dropzone exportFile={setFile} />
+      <Zoom
+        updateZoom={zoom => setZoomLevel(zoom)}
+        hidden={UIVisibility}
+      />
 
-        <ColorPicker width={152} height={128} color={color} onChange={setColor} hideRGB hideHSV />
+      <ControllersMainContainer hidden={UIVisibility}>
+        <ArcherContainer
+          strokeColor="#ffffff"
+          strokeWidth={1}
+          // strokeDasharray={"8, 8"}
+          startMarker={true}
+          endMarker={true}
+          offset={-4}
+        >
+          <ControllersContainer>
+            <ArcherElement
+              id="audio-decoder"
+              relations={[{
+                targetId: "data-modifier",
+                targetAnchor: "left",
+                sourceAnchor: "right",
+                style: {
+                  endShape: {
+                    circle: {
+                      radius: 4,
+                      fillColor: "black",
+                      strokeColor: "white",
+                      strokeWidth: 0,
+                    }
+                  }
+                }
+              }]}
+            >
+              <Controller>
+                <h4>Audio Decoder</h4>
+                <Dropzone exportFile={setFile} />
+              </Controller>
+            </ArcherElement>
 
-      </Panel>
+            <ArcherElement
+              id="data-modifier"
+              relations={[{
+                targetId: "generator-settings",
+                targetAnchor: "left",
+                sourceAnchor: "right",
+                style: {
+                  endShape: {
+                    circle: {
+                      radius: 4,
+                      fillColor: "black",
+                      strokeColor: "white",
+                      strokeWidth: 0,
+                    }
+                  }
+                }
+              }]}
+            >
+              <Controller>
+                <h4>Data Modifier</h4>
+              </Controller>
+            </ArcherElement>
 
-      <CanavasContainer>
+            <ArcherElement
+              id="generator-settings"
+            >
+              <Controller>
+                <h4>Generator Settings</h4>
+                <ColorPicker width={152} height={128} color={color} onChange={setColor} hideRGB hideHSV />
+              </Controller>
+            </ArcherElement>
+          </ControllersContainer>
+        </ArcherContainer>
+      </ControllersMainContainer>
+
+      <CanvasContainer
+        css={{
+          transform: `translate(-50%, -50%) scale(${zoomLevel})`,
+          borderRadius: 4 / zoomLevel
+        }}
+      >
+        {essentiaMagic.audioObject ?
         <ReactP5Wrapper
           sketch={generator.sketch}
 
@@ -97,13 +185,29 @@ export default function Engine() {
           ticks={essentiaMagic.audioObject.ticks}
 
         />
-      </CanavasContainer>
+        : <CanvasPlaceholder><span>Drag an audio file on the editor to start playing</span></CanvasPlaceholder>
+      }
+
+      </CanvasContainer>
 
       <EngineFooter
         renderer={"Canvas 2D"}
         sizeW={size.x}
         sizeH={size.y}
       />
+
+      <style>{`
+        .App {
+          ${transparentBg ? `background-color: #f5f5f5;
+          background-image:  
+        repeating-linear-gradient(45deg, #c9c9c9 25%, transparent 25%, transparent 75%, #c9c9c9 75%, #c9c9c9), 
+        repeating-linear-gradient(45deg, #c9c9c9 25%, #f5f5f5 25%, #f5f5f5 75%, #c9c9c9 75%, #c9c9c9);
+          background-position: 0 0, 10px 10px;
+          background-size: 20px 20px;` : ""}
+          height: 100vh;º
+        }
+      
+      `}</style>
 
     </div>
   )
