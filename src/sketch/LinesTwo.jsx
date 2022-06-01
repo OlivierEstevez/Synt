@@ -9,6 +9,8 @@ export default function LinesTwo(s){
 
     let volume
     let ticks
+    let bpm
+    let signature
 
     s.setup = () => {
         s.createCanvas(canvasSize.x, canvasSize.y)
@@ -21,13 +23,16 @@ export default function LinesTwo(s){
         visual.show(i)
 
         // i+= 60 / 60 / props.bpm * 30
-        i+= 0.01
+        // i+= 0.01
+        i+= 60 / bpm / 100
     }
 
     s.updateWithProps = props => {
         volume = props.volume
         ticks = props.ticks
+        bpm = props.bpm
         color = props.color.rgb
+        signature = props.signature
         canvasSize.x = props.sizeX
         canvasSize.y = props.sizeY
         s.resizeCanvas(canvasSize.x, canvasSize.y)
@@ -55,6 +60,7 @@ export default function LinesTwo(s){
             s.noStroke()
 
             let sameValueLines = []
+            let valueLines = []
 
             for (let i = 0; i < this.divisions; i++) {
                 // Spectrogram
@@ -81,20 +87,40 @@ export default function LinesTwo(s){
                         sameValueLines.push({x: this.x + n * sqSize, y: i * canvasSize.y / this.divisions, value: threshold})
                     }
 
+                    valueLines.push({x: this.x + n * sqSize, y: i * canvasSize.y / this.divisions, value: parseFloat(fixedValue)})
+
                 }
 
             }
 
-            // s.stroke(255)
+            s.stroke(255)
             for(let i = 0; i < sameValueLines.length; i++){
                 for(let q = 0;q < sameValueLines.length; q++){
                     s.stroke(255)
-                    s.line(
-                        sameValueLines[i].x + sqSize/2,
-                        sameValueLines[i].y + (this.height / this.divisions) / 2,
-                        sameValueLines[q].x + sqSize/2,
-                        sameValueLines[q].y + (this.height / this.divisions) / 2
-                    )
+                    // s.noFill()
+
+                    if(signature){
+                        const curve = 100
+                        s.bezier(
+                            sameValueLines[i].x + sqSize/2,
+                            sameValueLines[i].y + (this.height / this.divisions) / 2,
+                            sameValueLines[i].x + sqSize/2 + curve,
+                            sameValueLines[i].y + (this.height / this.divisions) / 2 + curve,
+                            sameValueLines[q].x + sqSize/2,
+                            sameValueLines[q].y + (this.height / this.divisions) / 2,
+                            sameValueLines[q].x + sqSize/2 + curve,
+                            sameValueLines[q].y + (this.height / this.divisions) / 2 + curve
+                        )
+                    } else {
+                        s.line(
+                            sameValueLines[i].x + sqSize/2,
+                            sameValueLines[i].y + (this.height / this.divisions) / 2,
+                            sameValueLines[q].x + sqSize/2,
+                            sameValueLines[q].y + (this.height / this.divisions) / 2
+                        )
+                    }
+
+                    s.ellipse(sameValueLines[i].x + sqSize/2, sameValueLines[i].y + (this.height / this.divisions) / 2, 10)
                 }
 
             }

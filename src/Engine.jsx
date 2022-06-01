@@ -9,13 +9,15 @@ import EngineHeader from "./components/Engine Parts/EngineHeader"
 import EngineFooter from "./components/Engine Parts/EngineFooter"
 import Button from "./components/UI/Button"
 import Dropzone from "./components/UI/Dropzone"
-import CanvasContainer, {CanvasPlaceholder} from "./components/Engine Parts/CanvasContainer"
+import CanvasContainer, { CanvasPlaceholder } from "./components/Engine Parts/CanvasContainer"
 import ControllersMainContainer, { ControllersContainer, Controller } from "./components/Engine Parts/Controllers"
 import { ColorPicker, useColor } from "react-color-palette"
 import "./styles/colorpicker.css"
 import { ArcherContainer, ArcherElement } from 'react-archer'
 import Zoom from "./components/Engine Parts/Zoom"
 import Select from "./components/UI/Select"
+import Slider from "./components/UI/Slider"
+import LoadingOverlay from "./components/Engine Parts/LoadingOverlay"
 
 // Essentia
 import useEssentiaAnalyser from "./utils/engine/useEssentiaAnalyser"
@@ -25,10 +27,12 @@ import testObject from "./utils/engine/testObject.json"
 import { ReactP5Wrapper } from "react-p5-wrapper"
 import generators from "./sketch/generators"
 import canvasToImage from "canvas-to-image"
+import InputLabelContainer from "./components/UI/InputLabelContainer"
+import ToggleSwitch from "./components/UI/Toggle"
 
 export default function Engine() {
 
-  const testMode = false
+  const testMode = true
 
   const [generator, setGenerator] = useState(generators[0])
 
@@ -48,7 +52,7 @@ export default function Engine() {
   // Essentia AudioObject
   useEffect(() => {
     if (didMount.current && testMode) {
-      // console.log(essentiaMagic.audioObject)
+      console.log(essentiaMagic.audioObject)
     } else {
       didMount.current = true
     }
@@ -74,8 +78,13 @@ export default function Engine() {
     })
   }
 
+  const [threshold, setThreshold] = useState(0)
+  const [divisions, setDivisions] = useState(16)
+
   return (
     <div className="App">
+
+      {essentiaMagic.loading ? <LoadingOverlay /> : ""}
 
       <EngineHeader
         width={size.x}
@@ -95,7 +104,7 @@ export default function Engine() {
 
       <Zoom
         updateZoom={zoom => setZoomLevel(zoom)}
-        hidden={UIVisibility}
+        // hidden={UIVisibility}
       />
 
       <ControllersMainContainer hidden={UIVisibility}>
@@ -152,6 +161,9 @@ export default function Engine() {
             >
               <Controller>
                 <h4>Data Modifier</h4>
+                <InputLabelContainer label="Normalize data">
+                  <ToggleSwitch></ToggleSwitch>
+                </InputLabelContainer>
               </Controller>
             </ArcherElement>
 
@@ -160,7 +172,15 @@ export default function Engine() {
             >
               <Controller>
                 <h4>Generator Settings</h4>
-                <ColorPicker width={152} height={128} color={color} onChange={setColor} hideRGB hideHSV />
+                {/* <ColorPicker width={152} height={128} color={color} onChange={setColor} hideRGB hideHSV /> */}
+                <InputLabelContainer label="Threshold">
+                  <Slider defaultValue={[0]} max={10} step={0.5} onValueChange={e => setThreshold(e[0])}></Slider>
+                </InputLabelContainer>
+                <span>{threshold}</span>
+                <InputLabelContainer label="Divisions">
+                  <Slider defaultValue={[16]} max={96} step={16} onValueChange={e => setDivisions(e[0])}></Slider>
+                </InputLabelContainer>
+                <span>{divisions}</span>
               </Controller>
             </ArcherElement>
           </ControllersContainer>
@@ -173,20 +193,24 @@ export default function Engine() {
           borderRadius: 4 / zoomLevel
         }}
       >
-        {essentiaMagic.audioObject ?
-        <ReactP5Wrapper
-          sketch={generator.sketch}
+        {essentiaMagic.audioObject.volume ?
+          <ReactP5Wrapper
+            sketch={generator.sketch}
 
-          sizeX={size.x}
-          sizeY={size.y}
-          color={color}
+            sizeX={size.x}
+            sizeY={size.y}
+            color={color}
+            threshold={threshold}
+            divisions={divisions}
 
-          volume={essentiaMagic.audioObject.volume}
-          ticks={essentiaMagic.audioObject.ticks}
+            bpm={essentiaMagic.audioObject.bpm}
+            volume={essentiaMagic.audioObject.volume}
+            ticks={essentiaMagic.audioObject.ticks}
+            signature={essentiaMagic.audioObject.signature}
 
-        />
-        : <CanvasPlaceholder><span>Drag an audio file on the editor to start playing</span></CanvasPlaceholder>
-      }
+          />
+          : <CanvasPlaceholder><span>Drag an audio file on the editor to start playing</span></CanvasPlaceholder>
+        }
 
       </CanvasContainer>
 

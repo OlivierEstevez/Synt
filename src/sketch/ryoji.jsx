@@ -9,6 +9,7 @@ export default function Ryoji(s){
 
     let volume
     let ticks
+    let bpm
 
     s.setup = () => {
         s.createCanvas(canvasSize.x, canvasSize.y)
@@ -21,12 +22,14 @@ export default function Ryoji(s){
         visual.show(i)
 
         // i+= 60 / 60 / props.bpm * 30
-        i+= 0.1
+        // i+= 0.1
+        i+= 60 / bpm / 10
     }
 
     s.updateWithProps = props => {
         volume = props.volume
         ticks = props.ticks
+        bpm = props.bpm
         color = props.color.rgb
         canvasSize.x = props.sizeX
         canvasSize.y = props.sizeY

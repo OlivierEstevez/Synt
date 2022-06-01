@@ -1,4 +1,6 @@
-export default function Ryoji(s){
+import setGradient from "../utils/p5 functions/gradient"
+
+export default function Testo(s) {
 
     let canvasSize = {
         x: 800,
@@ -9,25 +11,27 @@ export default function Ryoji(s){
 
     let volume
     let ticks
+    let bpm
 
     s.setup = () => {
-        s.createCanvas(canvasSize.x, canvasSize.y, s.WEBGL)
-        s.background(120)
+        s.createCanvas(canvasSize.x, canvasSize.y)
+        s.background(0)
     }
 
     s.draw = () => {
-        s.background(120)
-        // s.translate(- canvasSize.x / 2, - canvasSize.y / 2)
+        s.background(0)
         let visual = new visualizer(0, 0, canvasSize.x, canvasSize.y)
         visual.show(i)
 
         // i+= 60 / 60 / props.bpm * 30
-        i+= 0.001
+        // i+= 0.1
+        i+= 60 / bpm / 10 * 4
     }
 
     s.updateWithProps = props => {
         volume = props.volume
         ticks = props.ticks
+        bpm = props.bpm
         color = props.color.rgb
         canvasSize.x = props.sizeX
         canvasSize.y = props.sizeY
@@ -59,22 +63,28 @@ export default function Ryoji(s){
                     let roundValue = Math.round(value)
                     let fixedValue = value.toFixed(1)
 
+
                     s.fill(
-                        fixedValue * color.r,
-                        fixedValue * color.g,
-                        fixedValue * color.b
+                        Math.sin(anim / value) * fixedValue * color.r,
+                        Math.sin(anim / value) * fixedValue * color.g,
+                        Math.sin(anim / value) * fixedValue * color.b
                     )
 
-                    s.rotateX(anim)
+                    if(value >= 0.6){
+                        s.rect(
+                            this.x + n * sqSize,
+                            i * canvasSize.y / this.divisions,
+                            sqSize, this.height / this.divisions
+                        )
 
-                    s.push()
-                    s.rectMode(s.CENTER)
-                    s.rect(
-                        this.x + n * sqSize,
-                        i * canvasSize.y / this.divisions,
-                        sqSize, this.height / this.divisions
-                    )
-                    s.pop()
+                        setGradient(s,
+                            this.x + n * sqSize,
+                            i * canvasSize.y / this.divisions,
+                            canvasSize.x, this.height / this.divisions,
+                            s.color(0), s.color(Math.sin(anim / value) * fixedValue * 255), "V"
+                        )
+                    }
+                    
 
                 }
 

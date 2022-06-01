@@ -2,7 +2,7 @@ import RyojiLike from "./ryoji"
 import Filmic from "./Filmic"
 import GridSystem from "./GridSystem"
 import EmptySketch from "./OnlyVolume"
-import Lines from "./Lines"
+import Balls from "./Balls"
 import Blocks from "./Blocks"
 import LinesTwo from "./LinesTwo"
 
@@ -28,8 +28,8 @@ const generators = [
         sketch: Filmic
     },
     {
-        name: "Lines",
-        sketch: Lines
+        name: "Balls Test",
+        sketch: Balls
     },
     {
         name: "Grid System",

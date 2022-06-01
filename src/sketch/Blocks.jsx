@@ -1,3 +1,5 @@
+import imageFile from "./assets/circle.png"
+
 export default function Blocks(s){
 
     let canvasSize = {
@@ -10,9 +12,12 @@ export default function Blocks(s){
     let volume
     let ticks
 
+    let image
+
     s.setup = () => {
         s.createCanvas(canvasSize.x, canvasSize.y)
         s.background(0)
+        image = s.loadImage(imageFile)
     }
 
     s.draw = () => {
@@ -41,38 +46,76 @@ export default function Blocks(s){
             this.height = height
             this.direction = direction
             this.color = color
-            this.divisions = 64
-            this.margin = 8
+            this.divisions = 32
+            this.margin = 0
         }
 
         show(anim) {
 
-            // VOLUME
+            // // VOLUME
+            // s.noStroke()
+            // let sqSize = this.width / (volume.length)
+            // for (let n = 0; n < volume.length; n++){
+            //     let value = volume[n]
+            //     s.fill(value*255)
+            //     s.rect(this.x + n*sqSize, canvasSize.y / 2, sqSize, 20)
+            // }
+
+            // // TICKS / RHYTHM
+            // s.stroke(255, 0, 0)
+            // let rhythm = Math.round(ticks.length / this.divisions)
+            // let dividerSize = canvasSize.x / rhythm
+            // s.line(0, canvasSize.y / 2, canvasSize.x, canvasSize.y / 2)
+            // for(let i = 0; i < rhythm; i++){
+            //     s.line(i * dividerSize, 0, i * dividerSize, canvasSize.y)
+
+            //     let volumePart = volume.length / rhythm
+            //     for(let n = 0; n < volume.length / rhythm; n++){
+            //         s.fill(255)
+            //         s.rect(this.x + n*sqSize * i, canvasSize.y / 2, sqSize, 20)
+            //     }
+
+            // }
+
+            let sqSize = this.width / (volume.length / this.divisions)
             s.noStroke()
-            let sqSize = this.width / (volume.length)
-            for (let n = 0; n < volume.length; n++){
-                let value = volume[n]
-                s.fill(value*255)
-                s.rect(this.x + n*sqSize, canvasSize.y / 2, sqSize, 20)
-            }
 
-            // TICKS / RHYTHM
-            s.stroke(255, 0, 0)
-            let rhythm = Math.round(ticks.length / this.divisions)
-            let dividerSize = canvasSize.x / rhythm
-            s.line(0, canvasSize.y / 2, canvasSize.x, canvasSize.y / 2)
-            for(let i = 0; i < rhythm; i++){
-                s.line(i * dividerSize, 0, i * dividerSize, canvasSize.y)
+            let sameValueLines = []
 
-                let volumePart = volume.length / rhythm
-                for(let n = 0; n < volume.length / rhythm; n++){
+            for (let i = 0; i < this.divisions; i++) {
+                // Spectrogram
+                for (let n = 0; n < volume.length / this.divisions; n++) {
+                    let value = volume[n + (i * (volume.length / this.divisions))]
+                    let roundValue = Math.round(value)
+                    let fixedValue = value.toFixed(1)
+
                     s.fill(255)
-                    s.rect(this.x + n*sqSize * i, canvasSize.y / 2, sqSize, 20)
+                    s.rect(
+                        this.x + n * sqSize,
+                        i * canvasSize.y / this.divisions,
+                        sqSize, this.height / this.divisions
+                    )
+
+                    // s.fill(0)
+                    // s.ellipse(
+                    //     this.x + n * sqSize + sqSize/2,
+                    //     i * canvasSize.y / this.divisions + (canvasSize.y / this.divisions)/2 + 
+                    //         (canvasSize.y / this.divisions)*value,
+                    //     sqSize, this.height / this.divisions
+                    // )
+                    
+                    const size = 2
+                    s.image(image,
+                        this.x + n * sqSize,
+                        i * canvasSize.y / this.divisions - canvasSize.y / this.divisions + (canvasSize.y / this.divisions) * value,
+                        sqSize * size, this.height / this.divisions * size
+                    )
+                    
+
+
                 }
 
-            }
-            
-            
+            } 
 
         }
     }

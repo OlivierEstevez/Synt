@@ -7,6 +7,9 @@ export default function GridSystem(s){
     let volume
     let ticks
 
+    let threshold = 0
+    let divisions = 32
+
     s.setup = () => {
         s.createCanvas(canvasSize.x, canvasSize.y)
         s.background(0)
@@ -24,6 +27,8 @@ export default function GridSystem(s){
         ticks = props.ticks
         canvasSize.x = props.sizeX
         canvasSize.y = props.sizeY
+        threshold = props.threshold
+        divisions = props.divisions
         s.resizeCanvas(canvasSize.x, canvasSize.y)
     }
 
@@ -40,13 +45,13 @@ export default function GridSystem(s){
             this.height = height
             this.direction = direction
             this.color = color
-            this.divisions = 32
+            this.divisions = divisions == 0 ? 16 : divisions
             this.margin = 8
         }
 
         show() {
             let sqSize = this.width / volume.length
-            let threshold = 0.5
+            let thresholdValue = 1/threshold
             for (let n = 0; n < volume.length; n++) {
                 let value = volume[n]
                 let roundValue = Math.round(value)
@@ -57,12 +62,10 @@ export default function GridSystem(s){
                 s.fill(255)
 
                 // if(fixedValue >= 0.75)
-                if(fixedValueTwo >= threshold && fixedValueTwo <= threshold + 0.01)
+                if(fixedValueTwo >= thresholdValue && fixedValueTwo <= thresholdValue + 0.01)
                     s.rect(
                         this.x + sqSize*n, this.y, sqSize, this.height
                     )
-
-                
 
             }
 
