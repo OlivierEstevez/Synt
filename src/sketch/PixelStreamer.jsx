@@ -13,6 +13,10 @@ export default function Testo(s) {
     let ticks
     let bpm
 
+    let threshold = 0
+    let divisions = 32
+    let dataFixed
+
     s.setup = () => {
         s.createCanvas(canvasSize.x, canvasSize.y)
         s.background(0)
@@ -33,6 +37,9 @@ export default function Testo(s) {
         ticks = props.ticks
         bpm = props.bpm
         color = props.color.rgb
+        threshold = props.threshold
+        divisions = props.divisions
+        dataFixed = props.dataFixed
         canvasSize.x = props.sizeX
         canvasSize.y = props.sizeY
         s.resizeCanvas(canvasSize.x, canvasSize.y)
@@ -46,7 +53,7 @@ export default function Testo(s) {
             this.height = height
             this.direction = direction
             this.color = color
-            this.divisions = 32
+            this.divisions = divisions
             this.margin = 8
         }
 
@@ -59,30 +66,33 @@ export default function Testo(s) {
             for (let i = 0; i < this.divisions; i++) {
                 // Spectrogram
                 for (let n = 0; n < volume.length / this.divisions; n++) {
-                    let value = volume[n + (i * (volume.length / this.divisions))]
-                    let roundValue = Math.round(value)
-                    let fixedValue = value.toFixed(1)
+                    // let value = volume[n + (i * (volume.length / this.divisions))]
+                    // let roundValue = Math.round(value)
+                    // let fixedValue = value?.toFixed(1)
 
+                    let preValue = volume[n + (i * (volume.length / this.divisions))]
+                    let value = dataFixed ? preValue?.toFixed(1) : preValue
 
+                    
                     s.fill(
-                        Math.sin(anim / value) * fixedValue * color.r,
-                        Math.sin(anim / value) * fixedValue * color.g,
-                        Math.sin(anim / value) * fixedValue * color.b
+                        Math.sin(anim / value) * value * color.r,
+                        Math.sin(anim / value) * value * color.g,
+                        Math.sin(anim / value) * value * color.b
                     )
 
-                    if(value >= 0.6){
+                    if(value >= threshold/10){
                         s.rect(
                             this.x + n * sqSize,
                             i * canvasSize.y / this.divisions,
                             sqSize, this.height / this.divisions
                         )
 
-                        setGradient(s,
-                            this.x + n * sqSize,
-                            i * canvasSize.y / this.divisions,
-                            canvasSize.x, this.height / this.divisions,
-                            s.color(0), s.color(Math.sin(anim / value) * fixedValue * 255), "V"
-                        )
+                        // setGradient(s,
+                        //     this.x + n * sqSize,
+                        //     i * canvasSize.y / this.divisions,
+                        //     canvasSize.x - this.x + n * sqSize, this.height / this.divisions,
+                        //     s.color(Math.sin(anim) * value * 255), s.color(Math.sin(anim / value) * value * 255), "V"
+                        // )
                     }
                     
 

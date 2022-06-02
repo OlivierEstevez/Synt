@@ -32,7 +32,7 @@ import ToggleSwitch from "./components/UI/Toggle"
 
 export default function Engine() {
 
-  const testMode = true
+  const testMode = false
 
   const [generator, setGenerator] = useState(generators[0])
 
@@ -51,6 +51,8 @@ export default function Engine() {
 
   // Essentia AudioObject
   useEffect(() => {
+    console.log(essentiaMagic.audioObject)
+
     if (didMount.current && testMode) {
       console.log(essentiaMagic.audioObject)
     } else {
@@ -71,6 +73,9 @@ export default function Engine() {
   const [transparentBg, setTransparentBg] = useState(false)
   const [UIVisibility, setUIVisibility] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(1)
+  const [dataFixed, setDataFixed] = useState(false)
+  const [animate, setAnimate] = useState(false)
+  const [curvature, setCurvature] = useState(0)
 
   const exportImage = (name, type) => {
     canvasToImage("defaultCanvas0", {
@@ -104,7 +109,7 @@ export default function Engine() {
 
       <Zoom
         updateZoom={zoom => setZoomLevel(zoom)}
-        // hidden={UIVisibility}
+      // hidden={UIVisibility}
       />
 
       <ControllersMainContainer hidden={UIVisibility}>
@@ -162,7 +167,7 @@ export default function Engine() {
               <Controller>
                 <h4>Data Modifier</h4>
                 <InputLabelContainer label="Normalize data">
-                  <ToggleSwitch></ToggleSwitch>
+                  <ToggleSwitch onPressedChange={(value) => { setDataFixed(value) }}></ToggleSwitch>
                 </InputLabelContainer>
               </Controller>
             </ArcherElement>
@@ -176,11 +181,19 @@ export default function Engine() {
                 <InputLabelContainer label="Threshold">
                   <Slider defaultValue={[0]} max={10} step={0.5} onValueChange={e => setThreshold(e[0])}></Slider>
                 </InputLabelContainer>
-                <span>{threshold}</span>
                 <InputLabelContainer label="Divisions">
-                  <Slider defaultValue={[16]} max={96} step={16} onValueChange={e => setDivisions(e[0])}></Slider>
+                  <Slider defaultValue={[16]} max={96} step={4} onValueChange={e => setDivisions(e[0])}></Slider>
                 </InputLabelContainer>
-                <span>{divisions}</span>
+
+                {generator.name == "Filmic" ? <InputLabelContainer label="Animate"><ToggleSwitch onPressedChange={(value) => { setAnimate(value) }}></ToggleSwitch></InputLabelContainer> : ""}
+                {generator.name == "Cartographer" ?
+                  <InputLabelContainer label="Curvature">
+                    <Slider defaultValue={[100]} max={500} step={10} onValueChange={e => setCurvature(e[0])}></Slider>
+                  </InputLabelContainer>
+                  : ""}
+
+
+
               </Controller>
             </ArcherElement>
           </ControllersContainer>
@@ -202,6 +215,9 @@ export default function Engine() {
             color={color}
             threshold={threshold}
             divisions={divisions}
+            animate={animate}
+            dataFixed={dataFixed}
+            curvature={curvature}
 
             bpm={essentiaMagic.audioObject.bpm}
             volume={essentiaMagic.audioObject.volume}

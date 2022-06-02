@@ -10,6 +10,9 @@ export default function Ryoji(s){
     let volume
     let ticks
     let bpm
+    let dataFixed
+
+    let divisions
 
     s.setup = () => {
         s.createCanvas(canvasSize.x, canvasSize.y)
@@ -31,6 +34,8 @@ export default function Ryoji(s){
         ticks = props.ticks
         bpm = props.bpm
         color = props.color.rgb
+        dataFixed = props.dataFixed
+        divisions = props.divisions
         canvasSize.x = props.sizeX
         canvasSize.y = props.sizeY
         s.resizeCanvas(canvasSize.x, canvasSize.y)
@@ -49,7 +54,7 @@ export default function Ryoji(s){
             this.height = height
             this.direction = direction
             this.color = color
-            this.divisions = 32
+            this.divisions = divisions
             this.margin = 8
         }
 
@@ -62,9 +67,9 @@ export default function Ryoji(s){
             for (let i = 0; i < this.divisions; i++) {
                 // Spectrogram
                 for (let n = 0; n < volume.length / this.divisions; n++) {
-                    let value = volume[n + (i * (volume.length / this.divisions))]
-                    let roundValue = Math.round(value)
-                    let fixedValue = value.toFixed(1)
+
+                    let preValue = volume[n + (i * (volume.length / this.divisions))]
+                    let value = dataFixed ? preValue.toFixed(1) : preValue
 
                     // s.stroke(255)
 
@@ -107,9 +112,9 @@ export default function Ryoji(s){
                     // s.drawingContext.fillStyle = gradient
 
                     s.fill(
-                        Math.sin(anim / value) * fixedValue * color.r,
-                        Math.sin(anim / value) * fixedValue * color.g,
-                        Math.sin(anim / value) * fixedValue * color.b
+                        Math.sin(anim / value) * value * color.r,
+                        Math.sin(anim / value) * value * color.g,
+                        Math.sin(anim / value) * value * color.b
                     )
 
                     s.rect(

@@ -8,6 +8,8 @@ export default function filmic(s){
     let color
 
     let volume
+    let animate
+    let bpm
 
     s.setup = () => {
         s.createCanvas(canvasSize.x, canvasSize.y)
@@ -20,7 +22,7 @@ export default function filmic(s){
         let visual = new filmicSpectrogram(0, 0, s.width, s.height)
         visual.show(i)
 
-        i += 0.1
+        i+= 60 / bpm / 10
     }
 
     s.updateWithProps = props => {
@@ -28,6 +30,8 @@ export default function filmic(s){
         canvasSize.x = props.sizeX
         canvasSize.y = props.sizeY
         color = props.color.rgb
+        animate = props.animate
+        bpm = props.bpm
         s.resizeCanvas(canvasSize.x, canvasSize.y)
     }
 
@@ -55,9 +59,11 @@ export default function filmic(s){
             for(let i = 0; i < volume.length; i ++){
                 let value = volume[i]
                 s.fill(
-                    color.r*value,
-                    color.g*value,
-                    color.b*value
+
+                    animate ? color.r*value * Math.sin(anim / value) : color.r*value,
+                    animate ? color.g*value * Math.sin(anim / value) : color.g*value,
+                    animate ? color.b*value * Math.sin(anim / value) : color.b*value
+
                 )
                 s.rect(this.x + sqSize*i, this.y, sqSize, this.height)
             }

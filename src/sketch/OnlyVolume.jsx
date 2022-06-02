@@ -15,7 +15,7 @@ export default function onlyVolume(s) {
     }
 
     s.draw = () => {
-        s.background(color.r, color.g, color.b)
+        s.background(0)
 
         let data = volume.length
         let sqSize = canvasSize.x / data
@@ -25,7 +25,7 @@ export default function onlyVolume(s) {
             // value = Math.round(value)
 
             s.noStroke()
-            s.fill(255)
+            s.fill(color.r, color.g, color.b)
             s.rect(0 + x * sqSize, s.height/2, sqSize, value * canvasSize.y)
         }
     }

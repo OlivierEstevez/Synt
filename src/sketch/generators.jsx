@@ -2,23 +2,23 @@ import RyojiLike from "./ryoji"
 import Filmic from "./Filmic"
 import GridSystem from "./GridSystem"
 import EmptySketch from "./OnlyVolume"
-import Balls from "./Balls"
+import PixelStreamer from "./PixelStreamer"
 import Blocks from "./Blocks"
-import LinesTwo from "./LinesTwo"
+import Cartographer from "./Cartographer"
 
 const generators = [
     {
-        name: "Lines Pro",
-        sketch: LinesTwo
+        name: "Cartographer",
+        sketch: Cartographer
     },
-    {
-        name: "Blocks",
-        sketch: Blocks
-    },
-    {
-        name: "Only volume",
-        sketch: EmptySketch
-    },
+    // {
+    //     name: "Blocks",
+    //     sketch: Blocks
+    // },
+        {
+            name: "Only volume",
+            sketch: EmptySketch
+        },
     {
         name: "Ryoji Ikeda",
         sketch: RyojiLike
@@ -28,8 +28,8 @@ const generators = [
         sketch: Filmic
     },
     {
-        name: "Balls Test",
-        sketch: Balls
+        name: "Pixel Streamer",
+        sketch: PixelStreamer
     },
     {
         name: "Grid System",

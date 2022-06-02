@@ -1,4 +1,4 @@
-export default function LinesTwo(s){
+export default function Cartographer(s){
 
     let canvasSize = {
         x: 800,
@@ -11,6 +11,8 @@ export default function LinesTwo(s){
     let ticks
     let bpm
     let signature
+    let dataFixed
+    let curvature
 
     s.setup = () => {
         s.createCanvas(canvasSize.x, canvasSize.y)
@@ -33,6 +35,8 @@ export default function LinesTwo(s){
         bpm = props.bpm
         color = props.color.rgb
         signature = props.signature
+        dataFixed = props.dataFixed
+        curvature = props.curvature
         canvasSize.x = props.sizeX
         canvasSize.y = props.sizeY
         s.resizeCanvas(canvasSize.x, canvasSize.y)
@@ -65,14 +69,17 @@ export default function LinesTwo(s){
             for (let i = 0; i < this.divisions; i++) {
                 // Spectrogram
                 for (let n = 0; n < volume.length / this.divisions; n++) {
-                    let value = volume[n + (i * (volume.length / this.divisions))]
-                    let roundValue = Math.round(value)
-                    let fixedValue = value.toFixed(1)
+                    // let value = volume[n + (i * (volume.length / this.divisions))]
+                    // let roundValue = Math.round(value)
+                    // let fixedValue = value.toFixed(1)
+
+                    let preValue = volume[n + (i * (volume.length / this.divisions))]
+                    let value = dataFixed ? preValue.toFixed(1) : preValue
 
                     s.fill(
-                        fixedValue * color.r,
-                        fixedValue * color.g,
-                        fixedValue * color.b
+                        value * color.r,
+                        value * color.g,
+                        value * color.b
                     )
 
                     // s.rect(
@@ -87,7 +94,7 @@ export default function LinesTwo(s){
                         sameValueLines.push({x: this.x + n * sqSize, y: i * canvasSize.y / this.divisions, value: threshold})
                     }
 
-                    valueLines.push({x: this.x + n * sqSize, y: i * canvasSize.y / this.divisions, value: parseFloat(fixedValue)})
+                    valueLines.push({x: this.x + n * sqSize, y: i * canvasSize.y / this.divisions, value: parseFloat(value)})
 
                 }
 
@@ -100,16 +107,25 @@ export default function LinesTwo(s){
                     // s.noFill()
 
                     if(signature){
-                        const curve = 100
+                        const curve = curvature
                         s.bezier(
+                            // sameValueLines[i].x + sqSize/2,
+                            // sameValueLines[i].y + (this.height / this.divisions) / 2,
+                            // sameValueLines[i].x + sqSize/2 + curve,
+                            // sameValueLines[i].y + (this.height / this.divisions) / 2 + curve,
+                            // sameValueLines[q].x + sqSize/2,
+                            // sameValueLines[q].y + (this.height / this.divisions) / 2,
+                            // sameValueLines[q].x + sqSize/2 + curve,
+                            // sameValueLines[q].y + (this.height / this.divisions) / 2 + curve
+
                             sameValueLines[i].x + sqSize/2,
                             sameValueLines[i].y + (this.height / this.divisions) / 2,
-                            sameValueLines[i].x + sqSize/2 + curve,
+                            sameValueLines[i].x + sqSize/2 - curve,
                             sameValueLines[i].y + (this.height / this.divisions) / 2 + curve,
                             sameValueLines[q].x + sqSize/2,
                             sameValueLines[q].y + (this.height / this.divisions) / 2,
-                            sameValueLines[q].x + sqSize/2 + curve,
-                            sameValueLines[q].y + (this.height / this.divisions) / 2 + curve
+                            sameValueLines[q].x + sqSize/2 - curve,
+                            sameValueLines[q].y + (this.height / this.divisions) / 2 - curve
                         )
                     } else {
                         s.line(
