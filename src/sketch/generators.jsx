@@ -8,6 +8,10 @@ import Cartographer from "./Cartographer"
 
 const generators = [
     {
+        name: "Filmic",
+        sketch: Filmic
+    },
+    {
         name: "Cartographer",
         sketch: Cartographer
     },
@@ -22,10 +26,6 @@ const generators = [
     {
         name: "Ryoji Ikeda",
         sketch: RyojiLike
-    },
-    {
-        name: "Filmic",
-        sketch: Filmic
     },
     {
         name: "Pixel Streamer",
